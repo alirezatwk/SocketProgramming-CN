@@ -1,0 +1,3 @@
+
+#define SERVER_IP "127.0.0.1"
+#define MAX_PENDING_CONNECTIONS 30

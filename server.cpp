@@ -2,63 +2,51 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-#include "json.hpp"
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
 
-// int initiate_sockets(unsigned short listening_port){
+#include "user.h"
+
+#include "json.hpp"
+#include "config.h"
+
+
+
+// int initiate_sockets(unsigned short command_channel_port, unsigned short data_channel_port, int &command_socket, int &data_socket){
 // 	// Creating socket
-// 	int listening_socket;
-// 	if((listening_socket = socket(PF_INET, SOCK_STREAM, 0)) < 0)
-// 		print_log("Error creating socket.\n");
+// 	if((command_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+// 		printf("Error creating command socket.\n");
 // 	else
-// 		print_log("Socket created.\n");
+// 		printf("Command socket created.\n");
 
 // 	// Binding
-// 	struct sockaddr_in list_addr;
-// 	list_addr.sin_family = AF_INET;
-// 	list_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
-// 	list_addr.sin_port = htons(listening_port);
-// 	memset(list_addr.sin_zero, '\0', sizeof(list_addr.sin_zero));
+// 	struct sockaddr_in list_addrr;
+// 	list_addrr.sin_family = AF_INET;
+// 	list_addrr.sin_addr.s_addr = inet_addr(SERVER_IP);
+// 	list_addrr.sin_port = htons(command_channel_port);
+// 	memset(list_addrr.sin_zero, '\0', sizeof(list_addrr.sin_zero));
 
-// 	if(bind(listening_socket, (struct sockaddr *) &list_addr, sizeof(list_addr)) < 0)
-// 		print_log("Error in binding.\n");
+// 	if(bind(command_socket, (struct sockaddr *) &list_addrr, sizeof(list_addrr)) < 0)
+// 		printf("Error in binding.\n");
 // 	else
-// 		print_log("Socket binded.\n");
+// 		printf("Socket binded.\n");
 
 // 	// Listening
-// 	if(listen(listening_socket, MAX_PENDING_CONNECTIONS) < 0)
-// 		print_log("Error in listening.\n");
+// 	if(listen(command_socket, MAX_PENDING_CONNECTIONS) < 0)
+// 		printf("Error in listening.\n");
 // 	else
-// 		print_log("Server is listening.\n");
+// 		printf("Server is listening.\n");
 
 // 	int opts = 1;
-//     if(setsockopt(listening_socket, SOL_SOCKET, SO_REUSEADDR, (char*) &opts, sizeof(opts)) < 0)
-//         print_log("Error in options.\n");
+//     if(setsockopt(command_socket, SOL_SOCKET, SO_REUSEADDR, (char*) &opts, sizeof(opts)) < 0)
+//         printf("Error in options.\n");
 
-// 	return listening_socket;
+// 	return 0;
 // }
 
-class User{
-public:
-	User(std::string username, std::string password, bool admin, int size): username(username), password(password), admin(admin), size(size) {}
 
-	std::string get_username(){
-		return username;
-	}
-	std::string get_password(){
-		return password;
-	}
-	bool is_admin(){
-		return admin;
-	}
-	int get_size(){
-		return size;
-	}
-
-private:
-	std::string username, password;
-	bool admin;
-	int size;
-};
 
 void read_config(std::string config_path, int &command_channel_port, int &data_channel_port,
 		std::vector<User> &users_list, std::vector<std::string> &forbidden_files_list){
@@ -98,7 +86,8 @@ int main(int argc, char* argv[]){
 	read_config(argv[1], command_channel_port, data_channel_port, users_list, forbidden_files_list);
 
 	// int 
-	// initiate_sockets()
+	// initiate_sockets();
+
 
 	std::cout << command_channel_port << ' ' << data_channel_port << '\n';
 	for(auto user : users_list){
