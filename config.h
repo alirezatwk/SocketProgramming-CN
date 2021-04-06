@@ -1,3 +1,13 @@
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #define SERVER_IP "127.0.0.1"
 #define MAX_PENDING_CONNECTIONS 30
+#define MAX_CLIENTS 30
+#define BUF_SIZE 200
+
+#define COMMAND_CHANNEL_PORT 8000
+#define DATA_CHANNEL_PORT 8001
+
+
+#endif
