@@ -3,8 +3,8 @@ CC = g++
 
 All: Server Client
 
-Server: server.o user.o
-	$(CC) $(CFLAGS) -o server server.o user.o
+Server: server.o user.o str.o
+	$(CC) $(CFLAGS) -o server server.o user.o str.o
 
 Client: client.o
 	$(CC) $(CFLAGS) -o client client.o
@@ -15,6 +15,8 @@ server.o: server.cpp
 	$(CC) $(CFLAGS) -c server.cpp
 client.o: client.cpp
 	$(CC) $(CFLAGS) -c client.cpp
+str.o: str.cpp
+	$(CC) $(CFLAGS) -c str.cpp
 
 clean:
 	rm -f core *.o 

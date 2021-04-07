@@ -11,7 +11,7 @@
 
 #include "config.h"
 
-
+bool running = true;
 
 int connect_to_server(unsigned short listening_port){
 	// Creating socket
@@ -48,6 +48,17 @@ int main(int argc, char* argv[]){
 	int bytes = recv(command_socket, &buf, sizeof(buf), 0);
 	buf[bytes] = '\0';
 	printf(buf);
+
+	while(running){
+
+		std::cin.getline(buf, BUF_SIZE);
+		send(command_socket, &buf, strlen(buf), 0);
+
+
+		int bytes = recv(command_socket, &buf, sizeof(buf), 0);
+		buf[bytes] = '\0';
+		printf(buf);
+	}
 
 	return 0;
 }

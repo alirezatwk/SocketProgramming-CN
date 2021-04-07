@@ -13,7 +13,7 @@
 
 #include "json.hpp"
 #include "config.h"
-
+#include "str.h"
 
 bool running = true;
 
@@ -118,7 +118,7 @@ int initiate_fds(fd_set &fds, int command_socket, int data_socket, int *clients_
 	FD_ZERO(&fds);
 	FD_SET(STDIN_FILENO, &fds);
 	FD_SET(command_socket, &fds);
-	FD_SET(command_socket, &fds);
+	FD_SET(data_socket, &fds);
 
 	int fdmax = command_socket;
 	for(int i = 0; i < MAX_CLIENTS; i++){
@@ -148,7 +148,9 @@ int main(int argc, char* argv[]){
 	memset(clients_data_socket, 0, sizeof(clients_data_socket));
 
 	fd_set readfds;
-	char *buf[BUF_SIZE];
+	char buf[BUF_SIZE];
+	Str_Handler str_handler;
+
 	while(running){
 		int fdmax = initiate_fds(readfds, command_socket, data_socket, clients_command_socket);
 
@@ -173,67 +175,42 @@ int main(int argc, char* argv[]){
 			continue;
 		}
 
-		// for(int i = 0; i < MAX_PLAYERS; i++){
-		// 	if(FD_ISSET(clients_sockets[i], &fds)){
-		// 		int bytes = recv(clients_sockets[i], &buf, sizeof(buf), 0);
-		// 		if(bytes <= 0){
-		// 			if(bytes < 0)
-		// 				printf("Didn't receive message correctly.\n");
-		// 			else if(bytes == 0){
-		// 				printf("A player closed connection.\n");
-		// 				clients_size--;
-		// 				close(clients_sockets[i]);
-		// 				clients_sockets[i] = 0;
-		// 			}
-		// 		}
-		// 		else{
-		// 			// Game ends
-		// 			if(buf[0] == 'W'){
-		// 				sprintf(buf, "Player %d won project %d!\n", i, client_project[i]);
-		// 				print_terminal(buf);
-		// 			}
-		// 			// Choose a project
-		// 			else{
-		// 				int choice = atoi(buf);
-		// 				sprintf(buf, "Client %d choosed %d project.\n", i, choice);
-		// 				printf(buf);
-		// 				// sprintf(buf, "%d\n", projectsno[2]);
-		// 				// printf(buf);
-		// 				// int result_of_assign = assign_client_to_project(i, choice, client_project, projectsno, clients_sockets, (int**) project_clients);
-		// 				// projectsno[choice]++;
-		// 				// sprintf(buf, "%d\n", projectsno[2]);
-		// 				// printf(buf);
-		// 				int client = i;
-		// 				int project = choice;
-		// 				client_project[client] = project;
-		// 				//printf("project id %d\n", project);
-		// 				sprintf(buf, "%d", projectsno[project]);
-		// 				send(clients_sockets[client], &buf, strlen(buf), 0);
-
-		// 				sprintf(buf, "Get id %d to client %d.\n", projectsno[project], client);
-		// 				printf(buf);
-
-		// 				project_clients[project][projectsno[project]] = client;
-		// 				projectsno[project]++;
-		// 				//sprintf(buf, "Get id %d to client %d.\n", projects[project], client);
-		// 				//printf(buf);
-		// 				if(projectsno[project] == PROJECT_PLAYERS){
-		// 					//make_lobby(project, (int**) project_clients, clients_sockets);
-		// 					int lobby_port = lobby_ports++;
-		// 					sprintf(buf, "%d", lobby_port);
-		// 					for(int i = 0; i < PROJECT_PLAYERS; i++){
-		// 						int client_id = project_clients[project][i];
-		// 						send(clients_sockets[client_id], &buf, strlen(buf), 0);
-		// 					}
-
-		// 					sprintf(buf, "New port for broadcasting sent to %d, %d, %d, %d, %d clients.\n", project_clients[project][0], project_clients[project][1], project_clients[project][2], project_clients[project][3], project_clients[project][4]);
-		// 					printf(buf);
-		// 					remove_project(project, projectsno);
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// }
+		for(int i = 0; i < MAX_CLIENTS; i++){
+			if(FD_ISSET(clients_command_socket[i], &readfds)){
+				int bytes = recv(clients_command_socket[i], &buf, sizeof(buf), 0);
+				if(bytes <= 0){
+					if(bytes < 0)
+						printf("Didn't receive message correctly.\n");
+					else if(bytes == 0){
+						printf("A player closed connection.\n");
+						close(clients_command_socket[i]);
+						clients_command_socket[i] = 0;
+					}
+				}
+				else{
+					buf[bytes] = '\0';
+					str_handler.run(buf, bytes);
+					std::cout << str_handler.get_command() << std::endl;
+					sprintf(buf, "Oh. I Got that.\n");
+					send(clients_command_socket[i], &buf, strlen(buf), 0);
+				}
+			}
+			else if(FD_ISSET(clients_data_socket[i], &readfds)){
+				int bytes = recv(clients_data_socket[i], &buf, sizeof(buf), 0);
+				if(bytes <= 0){
+					if(bytes < 0)
+						printf("Didn't receive message correctly.\n");
+					else if(bytes == 0){
+						printf("A player closed connection.\n");
+						close(clients_data_socket[i]);
+						clients_data_socket[i] = 0;
+					}
+				}
+				else{
+					printf("Strange situation!\n");
+				}
+			}
+		}
 
 
 	}
