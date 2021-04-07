@@ -47,6 +47,7 @@ void Str_Handler::find_words(){
 			char1 = i;
 			char2 = find_end_word(i);
 			words.push_back(command.substr(char1 , char2 - char1));
+			
 			i = char2;
 		}
 	}
