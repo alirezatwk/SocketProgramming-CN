@@ -208,14 +208,10 @@ int main(int argc, char* argv[]){
 				}
 			}
 		}
-<<<<<<< HEAD
 	}
 
 	close(command_socket);
 	close(data_socket);
-=======
-			//Thank u Haj tavak!
->>>>>>> ba7195ae034a7b550eb925b86d77d38519924c73
 
 	for(auto client : clients){
 		if(client.command_socket != 0)
