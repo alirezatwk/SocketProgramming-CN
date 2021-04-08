@@ -4,6 +4,8 @@ User::User() {}
 
 User::User(std::string username, std::string password, bool admin, int size): username(username), password(password), admin(admin), size(size) {}
 
+User::User(const User &user): username(user.username), password(user.password), admin(user.admin), size(user.admin) {}
+
 std::string User::get_username(){
 	return username;
 }

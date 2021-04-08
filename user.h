@@ -7,6 +7,7 @@ class User{
 public:
 	User();
 	User(std::string username, std::string password, bool admin, int size);
+	User(const User &user);
 
 	std::string get_username();
 	std::string get_password();
