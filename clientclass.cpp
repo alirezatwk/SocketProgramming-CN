@@ -2,7 +2,7 @@
 
 std::string exec(const char* cmd) {
     char buffer[128];
-    printf("exec get: %s", cmd);
+    printf("Exec get: %s\n", cmd);
     std::string result = "";
     FILE* pipe = popen(cmd, "r");
     if (!pipe) throw std::runtime_error("popen() failed!");
@@ -18,7 +18,7 @@ std::string exec(const char* cmd) {
 
     pclose(pipe);
     result[result.size() - 1] = '\0';
-    std::cout << "result is:" << result << std::endl;
+    std::cout << "Result is:" << result << std::endl;
     return result;
 }
 
