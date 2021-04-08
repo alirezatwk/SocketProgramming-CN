@@ -16,7 +16,7 @@ bool running = true;
 int connect_to_server(unsigned short listening_port){
 	// Creating socket
 	int listening_socket;
-	if((listening_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0){
+	if((listening_socket = socket(PF_INET, SOCK_STREAM, 0)) < 0){
 		printf("Error creating socket.\n");
 		return -1;
 	}
@@ -45,13 +45,11 @@ int main(int argc, char* argv[]){
 	int data_socket = connect_to_server(DATA_CHANNEL_PORT);
 
 	char buf[BUF_SIZE];
-	int bytes = recv(command_socket, &buf, sizeof(buf), 0);
-	buf[bytes] = '\0';
-	printf(buf);
 
 	while(running){
 
 		std::cin.getline(buf, BUF_SIZE);
+		printf("%s\n", buf);
 		send(command_socket, &buf, strlen(buf), 0);
 
 

@@ -31,6 +31,7 @@ int Str_Handler::run(char *in , int input_size = 0){
 	std::string str(in);
 	command = str;
 	
+	words.clear();
 	find_words();
 
 	find_command();

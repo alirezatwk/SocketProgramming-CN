@@ -1,5 +1,7 @@
 #include "user.h"
 
+User::User() {}
+
 User::User(std::string username, std::string password, bool admin, int size): username(username), password(password), admin(admin), size(size) {}
 
 std::string User::get_username(){
@@ -16,4 +18,8 @@ bool User::is_admin(){
 
 int User::get_size(){
 	return size;
+}
+
+void User::set_username(std::string new_username){
+	username = new_username;
 }
