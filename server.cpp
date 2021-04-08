@@ -169,6 +169,8 @@ int main(int argc, char* argv[]){
 		// For STDIN
 		if(FD_ISSET(STDIN_FILENO, &readfds)) {
 			read(STDIN_FILENO, buf, sizeof(buf));
+			if(buf[0] == 'q')
+				running = false;
 			continue;
 		}
 
