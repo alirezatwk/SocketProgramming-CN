@@ -80,7 +80,7 @@ int main(int argc, char* argv[]){
 		if(FD_ISSET(STDIN_FILENO, &readfds)) {
 			int bytes = read(STDIN_FILENO, buf, sizeof(buf));
 			buf[bytes - 1] = '\0';
-			printf("%s\n", buf);
+			// printf("%s\n", buf);
 			send(command_socket, &buf, strlen(buf), 0);
 			continue;
 		}

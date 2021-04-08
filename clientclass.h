@@ -7,6 +7,8 @@
 #include <cstring>
 #include <stdexcept>
 #include <stdio.h>
+#include <fstream>
+#include <ctime>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include "user.h"
@@ -26,6 +28,8 @@ public:
 	void run(Str_Handler &str_handler, std::vector<User> &users_list, std::vector<std::string> &forbidden_files_list);
 
 	int get_status();
+
+	void log(std::string str);
 
 	// std::string Client::exec(const char* cmd);
 
