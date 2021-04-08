@@ -8,13 +8,15 @@ std::string exec(const char* cmd) {
     try {
         while (fgets(buffer, sizeof buffer, pipe) != NULL) {
             result += buffer;
+
         }
     } catch (...) {
         pclose(pipe);
         throw;
     }
+
     pclose(pipe);
-    printf("result is %s\n", result);
+    std::cout << "result is:" << result << std::endl;
     return result;
 }
 
@@ -31,7 +33,7 @@ Client::Client(): command_socket(0), data_socket(0), user(User()), pwd("") {}
 
 void Client::run(Str_Handler &str_handler, std::vector<User> &users_list, std::vector<std::string> &forbidden_files_list){
 	char buf[BUF_SIZE];
-
+	char buf2[BUF_SIZE];
 	if(str_handler.get_command_code() == 0){
 		status = USERNAME;
 		user.set_username(str_handler.get_attr1());
@@ -61,9 +63,10 @@ void Client::run(Str_Handler &str_handler, std::vector<User> &users_list, std::v
 	else if(str_handler.get_command_code() == 2){
 		if(pwd == ""){
 			pwd = exec("pwd");
-			printf("Pwd is %s\n", pwd);
+			std::cout << "pwd is:" << pwd << std::endl;
 		}
-		sprintf(buf, "257: %s\n", pwd);
+		strcpy(buf2, pwd.c_str());
+		sprintf(buf, "257: %s\n", buf2);
 	}
 	else if(str_handler.get_command_code() == 3){
 		sprintf(buf, "cd %s && mkdir ", pwd);
@@ -76,13 +79,15 @@ void Client::run(Str_Handler &str_handler, std::vector<User> &users_list, std::v
 	else if(str_handler.get_command_code() == 6)
 		std::cout << "cwd" << std::endl;
 	else if(str_handler.get_command_code() == 7)
-		std::cout << "raname" << std::endl;
+		std::cout << "rename" << std::endl;
 	else if(str_handler.get_command_code() == 8)
 		std::cout << "retr" << std::endl;
 	else if(str_handler.get_command_code() == 9)
 		std::cout << "help" << std::endl;
 	else if(str_handler.get_command_code() == 10)
 		std::cout << "quit" << std::endl;
+	else if(str_handler.get_command_code() == -1)
+		std::cout << "Bad Command" << std::endl;
 	send(command_socket, &buf, strlen(buf), 0);
 }
 
