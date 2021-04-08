@@ -45,18 +45,50 @@ int main(int argc, char* argv[]){
 	int data_socket = connect_to_server(DATA_CHANNEL_PORT);
 
 	char buf[BUF_SIZE];
+	fd_set readfds;
 
 	while(running){
 
-		std::cin.getline(buf, BUF_SIZE);
-		printf("%s\n", buf);
-		send(command_socket, &buf, strlen(buf), 0);
+		FD_ZERO(&readfds);
+		FD_SET(STDIN_FILENO, &readfds);
+		FD_SET(command_socket, &readfds);
+		FD_SET(data_socket, &readfds);
+
+		int fdmax = std::max(command_socket, data_socket);
+		if(select(fdmax + 1, &readfds, NULL, NULL, NULL) == -1){
+			printf("Select failed.\n");
+			break;
+		}
 
 
-		int bytes = recv(command_socket, &buf, sizeof(buf), 0);
-		buf[bytes] = '\0';
-		printf(buf);
+		if(FD_ISSET(command_socket, &readfds)){
+			int bytes = recv(command_socket, &buf, sizeof(buf), 0);
+			buf[bytes] = '\0';
+			printf(buf);
+			if(buf[0] == '2' && buf[1] == '2' && buf[2] == '1')
+				running = false;
+			continue;
+		}
+		if(FD_ISSET(data_socket, &readfds)){
+			int bytes = recv(data_socket, &buf, sizeof(buf), 0);
+			buf[bytes] = '\0';
+			printf(buf);
+			continue;
+		}
+
+		// For STDIN
+		if(FD_ISSET(STDIN_FILENO, &readfds)) {
+			int bytes = read(STDIN_FILENO, buf, sizeof(buf));
+			buf[bytes - 1] = '\0';
+			printf("%s\n", buf);
+			send(command_socket, &buf, strlen(buf), 0);
+			continue;
+		}
+		
 	}
+
+	close(command_socket);
+	close(data_socket);
 
 	return 0;
 }

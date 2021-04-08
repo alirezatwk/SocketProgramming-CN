@@ -20,7 +20,6 @@
 
 class Client{
 public:
-	// TODO sockets = 0 in begin
 
 	Client();
 

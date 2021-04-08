@@ -84,8 +84,12 @@ void Client::run(Str_Handler &str_handler, std::vector<User> &users_list, std::v
 				sprintf(buf, "257: %s created.\n", str_handler.get_attr1().c_str());
 			}
 			else if(str_handler.get_command_code() == 5){ // ls
-				std::cout << "ls" << std::endl;
+				sprintf(buf, "cd %s && ls", pwd.c_str());
+				std::string result = exec(buf);
+				sprintf(buf, "%s\n", result.c_str());
+				send(data_socket, &buf, strlen(buf), 0);
 
+				sprintf(buf, "226: List transfer done.\n");
 			}
 			else if(str_handler.get_command_code() == 6){ // cwd
 				// TODO: Check existence.
